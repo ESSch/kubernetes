@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+  namespace: development
+spec:
+  selector:
+    matchLabels:
+      app: test
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: test
+        image: alpine:3.5
+        command:
+        - /bin/bash
+        - -c
+        - |
+          cd /app
+          apk --update add wget && rm -rf /var/cache/apk/*
+          tar -xf small_business_encode.tar.gz
+          rm -f small_business_encode.tar.gz
+          sed -i '5i   php_value short_open_tag 1' .htaccess
+          sed -i 's/#php_value display_errors 1/php_value display_errors 1/' .htaccess
+          sed -i '5i php_value opcache.revalidate_freq 0' .htaccess
+          sed -i 's/#php_flag default_charset UTF-8/php_flag default_charset UTF-8/' .htaccess
+          chmod -R 0777 .
+        volumeMounts:
+        - name: app2
+          mountPath: /app
+      volumes:
+      - name: app2
+        emptyDir: {}
