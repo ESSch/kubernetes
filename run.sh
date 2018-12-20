@@ -1,3 +1,5 @@
+#!/bin/sh
+
 NAME_PROJECT=bitrix-123458;
 NAME_CLUSTER=bitrix;
 
@@ -14,9 +16,9 @@ fi;
 gcloud container clusters create $NAME_CLUSTER \
   --machine-type=n1-standard-1 --disk-size=10GB --image-type ubuntu \
   --scopes compute-rw,gke-default \
-  --machine-type=custom-1-1024 \
+  --machine-type=custom-1-1280 \
   --cluster-version=1.11 --enable-autoupgrade \
-  --num-nodes=1 --enable-autoscaling --min-nodes=1 --max-nodes=2 \
+  --num-nodes=2 --enable-autoscaling --min-nodes=1 --max-nodes=2 \
   --zone europe-north1-a
 
 #kubectl config set-context dev \
@@ -27,4 +29,4 @@ gcloud container clusters create $NAME_CLUSTER \
 #kubectl config use-context dev
 kubectl config set-context $(kubectl config current-context) --namespace=development
 kubectl apply -f namespace.yaml
-kubectl create -f deploymnet.yaml -f loadbalancer.yaml
+source deploy.sh
